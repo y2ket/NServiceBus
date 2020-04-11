@@ -31,10 +31,9 @@ namespace NServiceBus
         }
 
         /// <summary>
-        /// 
+        /// Runs the installers based on the provided configuration.
         /// </summary>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
+        /// <param name="configuration">Configuration.</param>
         public static async Task RunInstallers(EndpointConfiguration configuration)
         {
             Guard.AgainstNull(nameof(configuration), configuration);

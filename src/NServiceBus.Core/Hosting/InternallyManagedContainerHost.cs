@@ -2,7 +2,7 @@
 {
     using System.Threading.Tasks;
 
-    class InternallyManagedContainerHost : IStartableEndpoint, IInstallableEndpoint
+    class InternallyManagedContainerHost : IStartableEndpoint
     {
         public InternallyManagedContainerHost(IStartableEndpoint startableEndpoint, HostingComponent hostingComponent)
         {
