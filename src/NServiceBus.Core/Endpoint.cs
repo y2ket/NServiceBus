@@ -29,5 +29,17 @@ namespace NServiceBus
 
             return await startableEndpoint.Start().ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        public static async Task RunInstallers(EndpointConfiguration configuration)
+        {
+            Guard.AgainstNull(nameof(configuration), configuration);
+
+            await HostCreator.RunInstallers(configuration).ConfigureAwait(false);
+        }
     }
 }

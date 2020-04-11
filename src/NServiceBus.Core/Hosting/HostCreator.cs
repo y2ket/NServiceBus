@@ -38,7 +38,7 @@
             return externallyManagedContainerHost;
         }
 
-        public static async Task<IStartableEndpoint> CreateWithInternallyManagedContainer(EndpointConfiguration endpointConfiguration)
+        static Task<InternallyManagedContainerHost> CreateInternallyManagedContainerHost(EndpointConfiguration endpointConfiguration)
         {
             var settings = endpointConfiguration.Settings;
 
@@ -86,9 +86,18 @@
 
             hostingComponent.RegisterBuilder(internalBuilder, true);
 
-            await hostingComponent.RunInstallers().ConfigureAwait(false);
+            return Task.FromResult(new InternallyManagedContainerHost(startableEndpoint, hostingComponent));
+        }
 
-            return new InternallyManagedContainerHost(startableEndpoint, hostingComponent);
+        public static async Task<IStartableEndpoint> CreateWithInternallyManagedContainer(EndpointConfiguration endpointConfiguration)
+        {
+            return await CreateInternallyManagedContainerHost(endpointConfiguration).ConfigureAwait(false);
+        }
+
+        public static async Task RunInstallers(EndpointConfiguration endpointConfiguration)
+        {
+            var hostingComponent = await CreateInternallyManagedContainerHost(endpointConfiguration).ConfigureAwait(false);
+            await hostingComponent.RunInstallers().ConfigureAwait(false);
         }
     }
 }

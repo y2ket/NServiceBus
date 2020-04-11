@@ -44,13 +44,24 @@ namespace NServiceBus
 
             hostingComponent.RegisterBuilder(externalBuilder, false);
 
-            await hostingComponent.RunInstallers().ConfigureAwait(false);
-
             var endpointInstance = await hostingComponent.Start(startableEndpoint).ConfigureAwait(false);
 
             messageSession = endpointInstance;
 
             return endpointInstance;
+        }
+
+        public Task RunInstallers(IBuilder externalBuilder)
+        {
+            objectBuilder = externalBuilder;
+
+            var hostingComponent = HostingComponent.Initialize(hostingConfiguration);
+
+            var startableEndpoint = endpointCreator.CreateStartableEndpoint(externalBuilder, hostingComponent);
+
+            hostingComponent.RegisterBuilder(externalBuilder, false);
+
+            return hostingComponent.RunInstallers();
         }
 
         HostingComponent.Configuration hostingConfiguration;

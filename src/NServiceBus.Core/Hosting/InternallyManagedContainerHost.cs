@@ -2,7 +2,7 @@
 {
     using System.Threading.Tasks;
 
-    class InternallyManagedContainerHost : IStartableEndpoint
+    class InternallyManagedContainerHost : IStartableEndpoint, IInstallableEndpoint
     {
         public InternallyManagedContainerHost(IStartableEndpoint startableEndpoint, HostingComponent hostingComponent)
         {
@@ -13,6 +13,11 @@
         public Task<IEndpointInstance> Start()
         {
             return hostingComponent.Start(startableEndpoint);
+        }
+
+        public Task RunInstallers()
+        {
+            return hostingComponent.RunInstallers();
         }
 
         readonly IStartableEndpoint startableEndpoint;
