@@ -1,6 +1,7 @@
 namespace NServiceBus.Pipeline
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -16,8 +17,9 @@ namespace NServiceBus.Pipeline
         /// Called when the behavior is executed.
         /// </summary>
         /// <param name="context">The current context.</param>
+        /// <param name="cancellationToken">Token</param>
         /// <param name="next">The next <see cref="IBehavior{TIn,TOut}" /> in the chain to execute.</param>
-        Task Invoke(TInContext context, Func<TOutContext, Task> next);
+        Task Invoke(TInContext context, CancellationToken cancellationToken, Func<TOutContext, CancellationToken, Task> next);
     }
 
     /// <summary>

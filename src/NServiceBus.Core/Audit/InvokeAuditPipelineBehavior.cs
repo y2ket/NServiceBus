@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Pipeline;
     using Transport;
@@ -13,9 +14,9 @@
             this.auditAddress = auditAddress;
         }
 
-        public async Task Invoke(IIncomingPhysicalMessageContext context, Func<IIncomingPhysicalMessageContext, Task> next)
+        public async Task Invoke(IIncomingPhysicalMessageContext context, CancellationToken cancellationToken, Func<IIncomingPhysicalMessageContext, CancellationToken, Task> next)
         {
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
 
             context.Message.RevertToOriginalBodyIfNeeded();
 
@@ -23,7 +24,7 @@
 
             var auditContext = this.CreateAuditContext(processedMessage, auditAddress, context);
 
-            await this.Fork(auditContext).ConfigureAwait(false);
+            await this.Fork(auditContext, cancellationToken).ConfigureAwait(false);
         }
 
         readonly string auditAddress;

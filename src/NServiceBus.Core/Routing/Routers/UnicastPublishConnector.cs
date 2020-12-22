@@ -3,6 +3,7 @@ namespace NServiceBus
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Pipeline;
     using Routing;
@@ -16,7 +17,7 @@ namespace NServiceBus
             this.distributionPolicy = distributionPolicy;
         }
 
-        public override async Task Invoke(IOutgoingPublishContext context, Func<IOutgoingLogicalMessageContext, Task> stage)
+        public override async Task Invoke(IOutgoingPublishContext context, CancellationToken cancellationToken, Func<IOutgoingLogicalMessageContext, CancellationToken, Task> stage)
         {
             var eventType = context.Message.MessageType;
             var addressLabels = await GetRoutingStrategies(context, eventType).ConfigureAwait(false);
@@ -30,7 +31,7 @@ namespace NServiceBus
 
             try
             {
-                await stage(this.CreateOutgoingLogicalMessageContext(context.Message, addressLabels, context)).ConfigureAwait(false);
+                await stage(this.CreateOutgoingLogicalMessageContext(context.Message, addressLabels, context), cancellationToken).ConfigureAwait(false);
             }
             catch (QueueNotFoundException ex)
             {

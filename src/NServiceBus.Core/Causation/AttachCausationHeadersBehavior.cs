@@ -1,6 +1,7 @@
 namespace NServiceBus
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using Pipeline;
     using Transport;
@@ -12,14 +13,14 @@ namespace NServiceBus
             this.conversationIdStrategy = conversationIdStrategy;
         }
 
-        public Task Invoke(IOutgoingLogicalMessageContext context, Func<IOutgoingLogicalMessageContext, Task> next)
+        public Task Invoke(IOutgoingLogicalMessageContext context, CancellationToken cancellationToken, Func<IOutgoingLogicalMessageContext, CancellationToken, Task> next)
         {
             context.TryGetIncomingPhysicalMessage(out var incomingMessage);
 
             SetRelatedToHeader(context, incomingMessage);
             SetConversationIdHeader(context, incomingMessage);
 
-            return next(context);
+            return next(context, cancellationToken);
         }
 
         static void SetRelatedToHeader(IOutgoingLogicalMessageContext context, IncomingMessage incomingMessage)

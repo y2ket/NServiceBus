@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using MessageMutator;
     using Microsoft.Extensions.DependencyInjection;
@@ -14,17 +15,17 @@
             this.mutators = mutators;
         }
 
-        public Task Invoke(IIncomingLogicalMessageContext context, Func<IIncomingLogicalMessageContext, Task> next)
+        public Task Invoke(IIncomingLogicalMessageContext context, CancellationToken cancellationToken, Func<IIncomingLogicalMessageContext, CancellationToken, Task> next)
         {
             if (hasIncomingMessageMutators)
             {
-                return InvokeIncomingMessageMutators(context, next);
+                return InvokeIncomingMessageMutators(context, cancellationToken, next);
             }
 
-            return next(context);
+            return next(context, cancellationToken);
         }
 
-        async Task InvokeIncomingMessageMutators(IIncomingLogicalMessageContext context, Func<IIncomingLogicalMessageContext, Task> next)
+        async Task InvokeIncomingMessageMutators(IIncomingLogicalMessageContext context, CancellationToken cancellationToken, Func<IIncomingLogicalMessageContext, CancellationToken, Task> next)
         {
             var logicalMessage = context.Message;
             var current = logicalMessage.Instance;
@@ -37,6 +38,7 @@
             {
                 hasMutators = true;
 
+                //TODO: Decide how to pass token to mutators
                 await mutator.MutateIncoming(mutatorContext)
                     .ThrowIfNull()
                     .ConfigureAwait(false);
@@ -58,7 +60,7 @@
                 context.UpdateMessageInstance(mutatorContext.Message);
             }
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
         }
 
         volatile bool hasIncomingMessageMutators = true;

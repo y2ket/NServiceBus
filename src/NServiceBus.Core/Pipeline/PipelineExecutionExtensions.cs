@@ -5,16 +5,17 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using FastExpressionCompiler;
     using Pipeline;
 
     static class PipelineExecutionExtensions
     {
-        public static Func<TRootContext, Task> CreatePipelineExecutionFuncFor<TRootContext>(this IBehavior[] behaviors)
+        public static Func<TRootContext, CancellationToken, Task> CreatePipelineExecutionFuncFor<TRootContext>(this IBehavior[] behaviors)
             where TRootContext : IBehaviorContext
         {
-            return (Func<TRootContext, Task>)behaviors.CreatePipelineExecutionExpression();
+            return (Func<TRootContext, CancellationToken, Task>)behaviors.CreatePipelineExecutionExpression();
         }
 
         /// <code>
@@ -57,7 +58,7 @@
                     lambdaExpression = CreateBehaviorCallDelegate(currentBehavior, methodInfo, inContextParameter, doneDelegate, expressions);
                     continue;
                 }
-
+                //TODO: Generate proper lambda
                 lambdaExpression = CreateBehaviorCallDelegate(currentBehavior, methodInfo, inContextParameter, lambdaExpression, expressions);
             }
 

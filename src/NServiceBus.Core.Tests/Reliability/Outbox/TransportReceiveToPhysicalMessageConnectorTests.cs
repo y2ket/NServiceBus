@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using DelayedDelivery;
     using DeliveryConstraints;
@@ -123,7 +124,7 @@
 
         Task Invoke(ITransportReceiveContext context)
         {
-            return behavior.Invoke(context, c => Task.CompletedTask);
+            return behavior.Invoke(context, CancellationToken.None, (c, t) => Task.CompletedTask);
         }
 
         TransportReceiveToPhysicalMessageConnector behavior;
@@ -155,7 +156,7 @@
         {
             public IEnumerable<TransportOperation> TransportOperations { get; set; }
 
-            public Task Invoke(IBatchDispatchContext context)
+            public Task Invoke(IBatchDispatchContext context, CancellationToken cancellationToken)
             {
                 TransportOperations = context.Operations;
 

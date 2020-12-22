@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
@@ -25,11 +26,11 @@
 
         class CorruptionBehavior : IBehavior<IDispatchContext, IDispatchContext>
         {
-            public Task Invoke(IDispatchContext context, Func<IDispatchContext, Task> next)
+            public Task Invoke(IDispatchContext context, CancellationToken cancellationToken, Func<IDispatchContext, CancellationToken, Task> next)
             {
                 context.Operations.First().Message.Headers[Headers.MessageId] = "";
 
-                return next(context);
+                return next(context, cancellationToken);
             }
         }
 

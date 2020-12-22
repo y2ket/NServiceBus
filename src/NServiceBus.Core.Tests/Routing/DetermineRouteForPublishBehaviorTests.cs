@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using NServiceBus.Pipeline;
     using NServiceBus.Routing;
@@ -21,9 +22,9 @@
             };
 
             MulticastAddressTag addressTag = null;
-            await behavior.Invoke(context, _ =>
+            await behavior.Invoke(context, CancellationToken.None, (ctx, tkn) =>
             {
-                addressTag = (MulticastAddressTag)_.RoutingStrategies.Single().Apply(new Dictionary<string, string>());
+                addressTag = (MulticastAddressTag)ctx.RoutingStrategies.Single().Apply(new Dictionary<string, string>());
                 return Task.CompletedTask;
             });
 

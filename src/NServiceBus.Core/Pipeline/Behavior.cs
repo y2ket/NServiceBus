@@ -1,6 +1,7 @@
 ﻿namespace NServiceBus.Pipeline
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -13,19 +14,22 @@
         /// Called when the behavior is executed.
         /// </summary>
         /// <param name="context">The current context.</param>
+        /// <param name="cancellationToken">Cancellation token </param>
         /// <param name="next">The next <see cref="IBehavior{TContext, TContext}" /> in the chain to execute.</param>
-        public Task Invoke(TContext context, Func<TContext, Task> next)
+        public Task Invoke(TContext context, CancellationToken cancellationToken, Func<TContext, CancellationToken, Task> next)
         {
             Guard.AgainstNull(nameof(context), context);
+            Guard.AgainstNull(nameof(cancellationToken), cancellationToken);
             Guard.AgainstNull(nameof(next), next);
-            return Invoke(context, () => next(context));
+            return Invoke(context, cancellationToken, () => next(context, cancellationToken));
         }
 
         /// <summary>
         /// Called when the behavior is executed.
         /// </summary>
         /// <param name="context">The current context.</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="next">The next <see cref="IBehavior{TContext, TContext}" /> in the chain to execute.</param>
-        public abstract Task Invoke(TContext context, Func<Task> next);
+        public abstract Task Invoke(TContext context, CancellationToken cancellationToken, Func<Task> next);
     }
 }

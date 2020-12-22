@@ -2,6 +2,7 @@ namespace NServiceBus
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Pipeline;
 
@@ -55,7 +56,8 @@ namespace NServiceBus
 
         public Task ForwardCurrentMessageTo(string destination)
         {
-            return IncomingMessageOperations.ForwardCurrentMessageTo(this, destination);
+            //TODO: Change API signature
+            return IncomingMessageOperations.ForwardCurrentMessageTo(this, destination, CancellationToken.None);
         }
 
         public Task Subscribe(Type eventType, SubscribeOptions options)

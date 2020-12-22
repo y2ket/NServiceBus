@@ -1,6 +1,7 @@
 namespace NServiceBus
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.DependencyInjection;
     using Pipeline;
@@ -32,7 +33,8 @@ namespace NServiceBus
 
                 try
                 {
-                    await receivePipeline.Invoke(transportReceiveContext).ConfigureAwait(false);
+                    //TODO: Get token from transport seam
+                    await receivePipeline.Invoke(transportReceiveContext, CancellationToken.None).ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {

@@ -1,6 +1,7 @@
 ﻿namespace NServiceBus.AcceptanceTests.Core.Pipeline
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
@@ -78,10 +79,10 @@
 
             class CustomContextExtensionBehavior : IBehavior<IIncomingLogicalMessageContext, IIncomingLogicalMessageContext>
             {
-                public Task Invoke(IIncomingLogicalMessageContext context, Func<IIncomingLogicalMessageContext, Task> next)
+                public Task Invoke(IIncomingLogicalMessageContext context, CancellationToken cancellationToken, Func<IIncomingLogicalMessageContext, CancellationToken, Task> next)
                 {
                     context.Extensions.Set("CustomExtension", ExtensionValue);
-                    return next(context);
+                    return next(context, cancellationToken);
                 }
             }
         }

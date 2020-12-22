@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using MessageMutator;
     using Microsoft.Extensions.DependencyInjection;
@@ -15,17 +16,17 @@
             this.mutators = mutators;
         }
 
-        public Task Invoke(IOutgoingLogicalMessageContext context, Func<IOutgoingLogicalMessageContext, Task> next)
+        public Task Invoke(IOutgoingLogicalMessageContext context, CancellationToken cancellationToken, Func<IOutgoingLogicalMessageContext, CancellationToken, Task> next)
         {
             if (hasOutgoingMessageMutators)
             {
-                return InvokeOutgoingMessageMutators(context, next);
+                return InvokeOutgoingMessageMutators(context, cancellationToken, next);
             }
 
-            return next(context);
+            return next(context, cancellationToken);
         }
 
-        async Task InvokeOutgoingMessageMutators(IOutgoingLogicalMessageContext context, Func<IOutgoingLogicalMessageContext, Task> next)
+        async Task InvokeOutgoingMessageMutators(IOutgoingLogicalMessageContext context, CancellationToken cancellationToken, Func<IOutgoingLogicalMessageContext, CancellationToken, Task> next)
         {
             context.Extensions.TryGet(out LogicalMessage incomingLogicalMessage);
             context.Extensions.TryGet(out IncomingMessage incomingPhysicalMessage);
@@ -63,7 +64,7 @@
                 context.UpdateMessage(mutatorContext.OutgoingMessage);
             }
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
         }
 
         volatile bool hasOutgoingMessageMutators = true;

@@ -1,6 +1,7 @@
 ﻿namespace NServiceBus.Core.Tests.Pipeline
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Transactions;
     using NUnit.Framework;
@@ -17,7 +18,7 @@
             {
                 using (new TransactionScope(TransactionScopeOption.Required, TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    await behavior.Invoke(null, ctx => Task.CompletedTask);
+                    await behavior.Invoke(null, CancellationToken.None, (ctx, tkn) => Task.CompletedTask);
                 }
             }, Throws.InstanceOf<Exception>().And.Message.Contains("Ambient transaction detected. The transaction scope unit of work is not supported when there already is a scope present."));
         }
@@ -27,7 +28,7 @@
         {
             var behavior = new TransactionScopeUnitOfWorkBehavior(new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted });
 
-            return behavior.Invoke(null, ctx =>
+            return behavior.Invoke(null, CancellationToken.None, (ctx, tkn) =>
             {
                 Assert.NotNull(Transaction.Current);
                 return Task.CompletedTask;

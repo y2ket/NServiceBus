@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.DependencyInjection;
     using Pipeline;
@@ -10,20 +11,21 @@
 
     class UnitOfWorkBehavior : IBehavior<IIncomingPhysicalMessageContext, IIncomingPhysicalMessageContext>
     {
-        public Task Invoke(IIncomingPhysicalMessageContext context, Func<IIncomingPhysicalMessageContext, Task> next)
+        public Task Invoke(IIncomingPhysicalMessageContext context, CancellationToken cancellationToken, Func<IIncomingPhysicalMessageContext, CancellationToken, Task> next)
         {
             if (hasUnitsOfWork)
             {
-                return InvokeUnitsOfWork(context, next);
+                return InvokeUnitsOfWork(context, cancellationToken, next);
             }
 
-            return next(context);
+            return next(context, cancellationToken);
         }
 
-        async Task InvokeUnitsOfWork(IIncomingPhysicalMessageContext context, Func<IIncomingPhysicalMessageContext, Task> next)
+        async Task InvokeUnitsOfWork(IIncomingPhysicalMessageContext context, CancellationToken cancellationToken, Func<IIncomingPhysicalMessageContext, CancellationToken, Task> next)
         {
             var unitsOfWork = new Stack<IManageUnitsOfWork>();
 
+            //TODO: Figure out how to pass token to UoWs
             try
             {
                 var hasUow = false;
@@ -38,7 +40,7 @@
 
                 hasUnitsOfWork = hasUow;
 
-                await next(context).ConfigureAwait(false);
+                await next(context, cancellationToken).ConfigureAwait(false);
 
                 while (unitsOfWork.Count > 0)
                 {

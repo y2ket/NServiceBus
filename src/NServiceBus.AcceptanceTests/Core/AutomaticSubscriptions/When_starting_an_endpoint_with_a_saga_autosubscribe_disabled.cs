@@ -3,6 +3,7 @@ namespace NServiceBus.AcceptanceTests.Core.AutomaticSubscriptions
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
@@ -56,9 +57,9 @@ namespace NServiceBus.AcceptanceTests.Core.AutomaticSubscriptions
                     this.testContext = testContext;
                 }
 
-                public async Task Invoke(ISubscribeContext context, Func<ISubscribeContext, Task> next)
+                public async Task Invoke(ISubscribeContext context, CancellationToken cancellationToken, Func<ISubscribeContext, CancellationToken, Task> next)
                 {
-                    await next(context).ConfigureAwait(false);
+                    await next(context, cancellationToken).ConfigureAwait(false);
 
                     testContext.EventsSubscribedTo.Add(context.EventType);
                 }

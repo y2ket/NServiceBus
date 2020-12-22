@@ -4,12 +4,12 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Logging;
     using Microsoft.Extensions.DependencyInjection;
     using Pipeline;
     using Sagas;
-    using Transport;
 
     class SagaPersistenceBehavior : IBehavior<IInvokeHandlerContext, IInvokeHandlerContext>
     {
@@ -20,7 +20,7 @@
             this.sagaMetadataCollection = sagaMetadataCollection;
         }
 
-        public async Task Invoke(IInvokeHandlerContext context, Func<IInvokeHandlerContext, Task> next)
+        public async Task Invoke(IInvokeHandlerContext context, CancellationToken cancellationToken, Func<IInvokeHandlerContext, CancellationToken, Task> next)
         {
             var isTimeoutMessage = IsTimeoutMessage(context.Headers);
             var isTimeoutHandler = context.MessageHandler.IsTimeoutHandler;
@@ -39,7 +39,7 @@
 
             if (!(context.MessageHandler.Instance is Saga saga))
             {
-                await next(context).ConfigureAwait(false);
+                await next(context, cancellationToken).ConfigureAwait(false);
                 return;
             }
 
@@ -115,7 +115,7 @@
                 sagaInstanceState.AttachExistingEntity(loadedEntity);
             }
 
-            await next(context).ConfigureAwait(false);
+            await next(context, cancellationToken).ConfigureAwait(false);
 
             if (sagaInstanceState.NotFound)
             {
