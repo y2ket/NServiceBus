@@ -30,6 +30,7 @@
         /// <param name="context">The current context.</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <param name="next">The next <see cref="IBehavior{TContext, TContext}" /> in the chain to execute.</param>
+        //TODO: Should we make the token the last param?
         public abstract Task Invoke(TContext context, CancellationToken cancellationToken, Func<Task> next);
     }
 }

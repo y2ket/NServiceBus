@@ -19,6 +19,7 @@ namespace NServiceBus.Pipeline
         /// <param name="context">The current context.</param>
         /// <param name="cancellationToken">Token</param>
         /// <param name="next">The next <see cref="IBehavior{TIn,TOut}" /> in the chain to execute.</param>
+        //TODO: Should we make the token the last param?
         Task Invoke(TInContext context, CancellationToken cancellationToken, Func<TOutContext, CancellationToken, Task> next);
     }
 
