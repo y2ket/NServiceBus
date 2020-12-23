@@ -1,6 +1,7 @@
 namespace NServiceBus
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -14,6 +15,14 @@ namespace NServiceBus
         /// <param name="message">The message to send.</param>
         /// <param name="sendOptions">The options for the send.</param>
         Task Send(object message, SendOptions sendOptions);
+
+        /// <summary>
+        /// Sends the provided message.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="sendOptions">The options for the send.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        Task Send(object message, SendOptions sendOptions, CancellationToken cancellationToken);
 
         /// <summary>
         /// Instantiates a message of type T and sends it.

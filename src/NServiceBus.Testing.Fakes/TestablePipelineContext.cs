@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Threading;
     using System.Threading.Tasks;
     using Extensibility;
     using MessageInterfaces.MessageMapper.Reflection;
@@ -45,6 +46,17 @@
         /// <param name="message">The message to send.</param>
         /// <param name="options">The options for the send.</param>
         public virtual Task Send(object message, SendOptions options)
+        {
+            return Send(message, options, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Sends the provided message.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="options">The options for the send.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        public virtual Task Send(object message, SendOptions options, CancellationToken cancellationToken)
         {
             var headers = options.GetHeaders();
 

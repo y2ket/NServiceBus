@@ -60,7 +60,6 @@ namespace NServiceBus
                 options.Context,
                 context);
 
-            //TODO: Change public signature
             return publishPipeline.Invoke(publishContext, CancellationToken.None);
         }
 
@@ -71,7 +70,6 @@ namespace NServiceBus
                 eventType,
                 options.Context);
 
-            //TODO: Change public signature
             return subscribePipeline.Invoke(subscribeContext, CancellationToken.None);
         }
 
@@ -82,7 +80,6 @@ namespace NServiceBus
                 eventType,
                 options.Context);
 
-            //TODO: Change public signature
             return unsubscribePipeline.Invoke(unsubscribeContext, CancellationToken.None);
         }
 
@@ -91,11 +88,11 @@ namespace NServiceBus
             return SendMessage(context, typeof(T), messageMapper.CreateInstance(messageConstructor), options, CancellationToken.None);
         }
 
-        public Task Send(IBehaviorContext context, object message, SendOptions options)
+        public Task Send(IBehaviorContext context, object message, SendOptions options, CancellationToken cancellationToken)
         {
             var messageType = messageMapper.GetMappedTypeFor(message.GetType());
 
-            return SendMessage(context, messageType, message, options, CancellationToken.None);
+            return SendMessage(context, messageType, message, options, cancellationToken);
         }
 
         Task SendMessage(IBehaviorContext context, Type messageType, object message, SendOptions options, CancellationToken cancellationToken)

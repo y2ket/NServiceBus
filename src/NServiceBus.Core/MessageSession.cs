@@ -1,6 +1,7 @@
 namespace NServiceBus
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
     class MessageSession : IMessageSession
@@ -13,9 +14,15 @@ namespace NServiceBus
 
         public Task Send(object message, SendOptions sendOptions)
         {
+            return Send(message, sendOptions, CancellationToken.None);
+        }
+
+        public Task Send(object message, SendOptions sendOptions, CancellationToken cancellationToken)
+        {
             Guard.AgainstNull(nameof(message), message);
             Guard.AgainstNull(nameof(sendOptions), sendOptions);
-            return messageOperations.Send(context, message, sendOptions);
+            Guard.AgainstNull(nameof(cancellationToken), cancellationToken);
+            return messageOperations.Send(context, message, sendOptions, cancellationToken);
         }
 
         public Task Send<T>(Action<T> messageConstructor, SendOptions sendOptions)

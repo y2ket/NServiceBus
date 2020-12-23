@@ -26,7 +26,13 @@ namespace NServiceBus
 
         public Task Send(object message, SendOptions options)
         {
-            return messageOperations.Send(this, message, options);
+            //TODO: Should we consider storing the token for the message processing in the context and use it by default since the user didn't explicitly give us a token?
+            return Send(message, options, CancellationToken.None);
+        }
+
+        public Task Send(object message, SendOptions options, CancellationToken cancellationToken)
+        {
+            return messageOperations.Send(this, message, options, cancellationToken);
         }
 
         public Task Send<T>(Action<T> messageConstructor, SendOptions options)

@@ -71,11 +71,17 @@ namespace NServiceBus
 
         public Task Send(object message, SendOptions sendOptions)
         {
+            return Send(message, sendOptions, CancellationToken.None);
+        }
+
+        public Task Send(object message, SendOptions sendOptions, CancellationToken cancellationToken)
+        {
             Guard.AgainstNull(nameof(message), message);
             Guard.AgainstNull(nameof(sendOptions), sendOptions);
+            Guard.AgainstNull(nameof(cancellationToken), cancellationToken);
 
             GuardAgainstUseWhenNotStarted();
-            return messageSession.Send(message, sendOptions);
+            return messageSession.Send(message, sendOptions, cancellationToken);
         }
 
         public Task Send<T>(Action<T> messageConstructor, SendOptions sendOptions)
