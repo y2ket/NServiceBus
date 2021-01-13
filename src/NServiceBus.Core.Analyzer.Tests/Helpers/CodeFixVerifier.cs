@@ -71,6 +71,10 @@
 
             //after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = await GetStringFromDocument(document);
+
+            // Normalize line endings, just in case
+            actual = actual.Replace("\r\n", "\n");
+            newSource = newSource.Replace("\r\n", "\n");
             Assert.AreEqual(newSource, actual);
         }
 

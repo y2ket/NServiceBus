@@ -64,5 +64,8 @@
         /// Metadata for the incoming message.
         /// </summary>
         public MessageMetadata MessageMetadata { get; set; } = new MessageMetadata(typeof(object));
+
+        // TODO: Temporarily using CancellationToken.None for spike
+        public CancellationToken CancellationToken => CancellationToken.None;
     }
 }
