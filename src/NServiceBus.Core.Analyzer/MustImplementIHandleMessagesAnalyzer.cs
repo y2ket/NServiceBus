@@ -30,7 +30,12 @@
         ///     Initializes the specified analyzer on the <paramref name="context" />.
         /// </summary>
         /// <param name="context">The context.</param>
-        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(AnalyzeSyntax, SyntaxKind.ClassDeclaration);
+        public override void Initialize(AnalysisContext context)
+        {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.RegisterSyntaxNodeAction(AnalyzeSyntax, SyntaxKind.ClassDeclaration);
+        }
 
         void AnalyzeSyntax(SyntaxNodeAnalysisContext context)
         {
