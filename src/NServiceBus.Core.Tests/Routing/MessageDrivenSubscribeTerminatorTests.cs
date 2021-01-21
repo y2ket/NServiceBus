@@ -9,6 +9,7 @@
     using NUnit.Framework;
     using Testing;
     using Unicast.Queuing;
+    using System.Threading;
 
     [TestFixture]
     public class MessageDrivenSubscribeTerminatorTests
@@ -28,8 +29,8 @@
         {
             var unsubscribeTerminator = new MessageDrivenUnsubscribeTerminator(router, "replyToAddress", "Endpoint", dispatcher);
 
-            await subscribeTerminator.Invoke(new TestableSubscribeContext(), c => Task.CompletedTask);
-            await unsubscribeTerminator.Invoke(new TestableUnsubscribeContext(), c => Task.CompletedTask);
+            await subscribeTerminator.Invoke(new TestableSubscribeContext(), (_, __) => Task.CompletedTask, default);
+            await unsubscribeTerminator.Invoke(new TestableUnsubscribeContext(), (_, __) => Task.CompletedTask, default);
 
             foreach (var dispatchedTransportOperation in dispatcher.DispatchedTransportOperations)
             {
@@ -44,7 +45,7 @@
         [Test]
         public async Task Should_Dispatch_for_all_publishers()
         {
-            await subscribeTerminator.Invoke(new TestableSubscribeContext(), c => Task.CompletedTask);
+            await subscribeTerminator.Invoke(new TestableSubscribeContext(), (_, __) => Task.CompletedTask, default);
 
             Assert.AreEqual(1, dispatcher.DispatchedTransportOperations.Count);
         }
@@ -58,7 +59,7 @@
             state.RetryDelay = TimeSpan.Zero;
             dispatcher.FailDispatch(10);
 
-            await subscribeTerminator.Invoke(context, c => Task.CompletedTask);
+            await subscribeTerminator.Invoke(context, (_, __) => Task.CompletedTask, default);
 
             Assert.AreEqual(1, dispatcher.DispatchedTransportOperations.Count);
             Assert.AreEqual(10, dispatcher.FailedNumberOfTimes);
@@ -75,7 +76,7 @@
 
             Assert.That(async () =>
             {
-                await subscribeTerminator.Invoke(context, c => Task.CompletedTask);
+                await subscribeTerminator.Invoke(context, (_, __) => Task.CompletedTask, default);
             }, Throws.InstanceOf<QueueNotFoundException>());
 
             Assert.AreEqual(0, dispatcher.DispatchedTransportOperations.Count);
