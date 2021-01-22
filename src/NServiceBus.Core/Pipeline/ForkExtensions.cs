@@ -12,7 +12,7 @@
             where TToContext : IBehaviorContext
         {
             _ = forkConnector;
-            
+
             return context.InvokePipeline(token);
         }
     }

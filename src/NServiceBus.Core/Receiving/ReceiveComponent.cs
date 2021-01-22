@@ -1,6 +1,5 @@
 namespace NServiceBus
 {
-    using Unicast.Messages;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -12,6 +11,7 @@ namespace NServiceBus
     using Pipeline;
     using Transport;
     using Unicast;
+    using Unicast.Messages;
 
     partial class ReceiveComponent
     {

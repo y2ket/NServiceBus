@@ -39,7 +39,7 @@
             var context = CreateContext();
 
             UnicastAddressTag addressTag = null;
-            await behavior.Invoke(context, (c,_) =>
+            await behavior.Invoke(context, (c, _) =>
             {
                 addressTag = (UnicastAddressTag)c.RoutingStrategies.Single().Apply(new Dictionary<string, string>());
                 return Task.CompletedTask;
