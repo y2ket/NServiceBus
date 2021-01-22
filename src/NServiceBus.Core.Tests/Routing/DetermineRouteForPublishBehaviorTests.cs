@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using NServiceBus.Pipeline;
     using NServiceBus.Routing;
@@ -26,7 +25,7 @@
             {
                 addressTag = (MulticastAddressTag)c.RoutingStrategies.Single().Apply(new Dictionary<string, string>());
                 return Task.CompletedTask;
-            }, CancellationToken.None);
+            }, default);
 
             Assert.AreEqual(typeof(MyEvent), addressTag.MessageType);
         }
