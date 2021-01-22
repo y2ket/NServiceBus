@@ -9,7 +9,6 @@
     using Transport;
     using NUnit.Framework;
     using Testing;
-    using System.Threading;
 
     [TestFixture]
     public class RoutingToDispatchConnectorTests
@@ -23,7 +22,7 @@
                 {
                     headers = context.Operations.First().Message.Headers;
                     return Task.CompletedTask;
-                }, CancellationToken.None);
+                }, default);
 
             Assert.IsTrue(headers.ContainsKey("CustomHeader"));
         }
@@ -43,7 +42,7 @@
                 {
                     dispatched = true;
                     return Task.CompletedTask;
-                }, CancellationToken.None);
+                }, default);
 
             Assert.IsTrue(dispatched);
         }
@@ -60,7 +59,7 @@
                 {
                     dispatched = true;
                     return Task.CompletedTask;
-                }, CancellationToken.None);
+                }, default);
 
             Assert.IsTrue(dispatched);
         }
@@ -77,7 +76,7 @@
                 {
                     dispatched = true;
                     return Task.CompletedTask;
-                }, CancellationToken.None);
+                }, default);
 
             Assert.IsFalse(dispatched);
         }

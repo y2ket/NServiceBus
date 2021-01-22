@@ -38,7 +38,7 @@
             incomingContext.Services.AddSingleton<IHandleSagaNotFound>(new HandleSagaNotFoundReturnsNull1());
             incomingContext.Services.AddSingleton<IHandleSagaNotFound>(new HandleSagaNotFoundValid());
 
-            Assert.That(async () => await behavior.Invoke(incomingContext, SetSagaNotFound, CancellationToken.None), Throws.Exception.With.Message.EqualTo("Return a Task or mark the method as async."));
+            Assert.That(async () => await behavior.Invoke(incomingContext, SetSagaNotFound, default), Throws.Exception.With.Message.EqualTo("Return a Task or mark the method as async."));
         }
 
 

@@ -3,7 +3,6 @@ namespace NServiceBus.Unicast.Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Extensions.DependencyInjection;
     using NUnit.Framework;
@@ -185,7 +184,7 @@ namespace NServiceBus.Unicast.Tests
                 }
 
                 return Task.CompletedTask;
-            }, CancellationToken.None);
+            }, default);
         }
 
         class UnitOfWorkThatThrowsFromEnd : IManageUnitsOfWork
