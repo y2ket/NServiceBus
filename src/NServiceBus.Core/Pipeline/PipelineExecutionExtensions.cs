@@ -7,6 +7,7 @@
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using FastExpressionCompiler;
     using Pipeline;
     using static System.Linq.Expressions.Expression;
 
@@ -74,7 +75,7 @@
             var body = Call(Constant(currentBehavior), methodInfo, outerContextParam, Constant(previous), cancellationTokenParameter);
             var lambdaExpression = Lambda(body, outerContextParam, cancellationTokenParameter);
             expressions?.Add(lambdaExpression);
-            return lambdaExpression.Compile();
+            return lambdaExpression.CompileFast();
         }
 
         /// <code>
@@ -85,7 +86,7 @@
             var innerContextParam = Parameter(inContextType, $"context{i + 1}");
             var cancellationTokenParam = Parameter(typeof(CancellationToken), $"token{i + 1}");
             var lambdaType = typeof(Func<,,>).MakeGenericType(inContextType, typeof(CancellationToken), typeof(Task));
-            return Lambda(lambdaType, Constant(Task.CompletedTask), innerContextParam, cancellationTokenParam).Compile();
+            return Lambda(lambdaType, Constant(Task.CompletedTask), innerContextParam, cancellationTokenParam).CompileFast();
         }
     }
 }
