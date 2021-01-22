@@ -1,7 +1,6 @@
 ﻿namespace NServiceBus.Core.Tests.Pipeline
 {
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
     using System.Transactions;
     using NUnit.Framework;
@@ -32,7 +31,7 @@
             {
                 Assert.NotNull(Transaction.Current);
                 return Task.CompletedTask;
-            }, CancellationToken.None);
+            }, default);
         }
     }
 }
