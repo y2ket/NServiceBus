@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using NServiceBus.Pipeline;
     using NServiceBus.Routing;
@@ -34,7 +33,7 @@
             {
                 addressTag = (UnicastAddressTag)c.RoutingStrategies.Single().Apply(new Dictionary<string, string>());
                 return Task.CompletedTask;
-            }, CancellationToken.None);
+            }, default);
 
             Assert.AreEqual("ReplyAddressOfIncomingMessage", addressTag.Destination);
         }
@@ -70,7 +69,7 @@
             {
                 addressTag = (UnicastAddressTag)c.RoutingStrategies.Single().Apply(new Dictionary<string, string>());
                 return Task.CompletedTask;
-            }, CancellationToken.None);
+            }, default);
 
             Assert.AreEqual("CustomReplyToAddress", addressTag.Destination);
         }
